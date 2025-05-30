@@ -28,10 +28,10 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
     <li class="nav-item"><a href="main.html" class="nav-link"><i class="bx bx-bar-chart-square"></i>Dashboard</a></li>
     <!--INVENTORY-->
     <li class="nav-item">
-      <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#inventoryMenu" aria-expanded="true"><i class="bx bx-package"></i>Inventory</a></li>
+      <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#inventoryMenu" aria-expanded="true"><i class="bx bx-package"></i>Inventory Management</a></li>
         <div class="collapse" id="inventoryMenu">
           <ul class="list-unstyled ps-3">
-            <li><a href="inventory.php" class="nav-link">Item</a></li>
+            <li><a href="inventory.php" class="nav-link">Inventory</a></li>
             <li><a href="categoryInventory.php" class="nav-link">Category</a></li>
           </ul>
         </div>
@@ -72,7 +72,7 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
   </div>
 
   <div class="content" id="dashboardContent">
-    <div class="breadcrumb">Dashboard / Inventory</div>
+    <div class="breadcrumb">Dashboard / Inventory Management Inventory</div>
 
     <div class="container mt-4">
       <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -80,6 +80,11 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
           <span class="input-group-text"><i class="bx bx-search"></i></span>
           <input type="text" id="itemSearch" class="form-control" placeholder="Search Inventory...">
         </div>
+        
+        <div class="d-flex gap-6"></div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemLogModal" >
+          <i class="bx bx-plus"></i> Inventory Update
+        </button>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addInventoryModal">
           <i class="bx bx-plus"></i> Add Inventory
         </button>
@@ -108,6 +113,55 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
   <footer class="footer mt-auto py-3 bg-light">
     <div class="container text-center"><span class="text-muted">© 2025 All rights reserved.</span></div>
   </footer>
+</div>
+<!-- Item Log Modal -->
+<div class="modal fade" id="itemLogModal" tabindex="-1" aria-labelledby="itemLogModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form class="modal-content" action="includes/itemLog.inc.php" method="POST">
+      <div class="modal-header">
+        <h5 class="modal-title">Inventory Update</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!--ITEM ID-->
+        <!--<div class="mb-3">
+          <label for="LogID" class="form-label">Log ID</label>
+          <input type="text" class="form-control" id="LogID" name="LogID" required>
+        </div>-->
+        <div class="mb-3">
+          <label for="ItemID" class="form-label">Item Name</label>
+          <select class="form-select" id="ItemID" name="ItemID" required>
+          <option value="">Select Item</option>
+          <?php foreach ($ItemID as $ItemID): ?>
+            <option value="<?= htmlspecialchars($ItemID['ItemID']) ?>">
+              <?= htmlspecialchars($ItemID['ItemName']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="ItemQty" class="form-label">Quantity</label>
+            <input id="ItemQty" name="ItemQty" type="number" min="0" step="1" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="ItemStatus" class="form-label">Status:</label>
+            <select class="form-select" id="ItemStatus" name="ItemStatus" required>
+              <option value="Pending Donation">Pending Donation</option>
+              <option value="Donation">Donation</option>
+              <option value="Disposal">Disposal</option>
+              <option value="Sold">Sold</option>
+            </select>
+          </div>
+      </div>
+        
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- Add Inventory Modal -->
@@ -241,6 +295,8 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
     }
   }
 
+  
+  
   // Filter roles
   document.getElementById('itemSearch').addEventListener('input', function () {
     const searchValue = this.value.toLowerCase();
@@ -268,6 +324,16 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
       .then(response => response.text())
       .then(data => {
         document.getElementById("editCategoryID").innerHTML += data;
+      })
+      .catch(error => console.error("Error loading categories:", error));
+  });
+
+  // getItemName function for ItemLog modal
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("includes/getItemName.inc.php")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("ItemID").innerHTML += data;
       })
       .catch(error => console.error("Error loading categories:", error));
   });
