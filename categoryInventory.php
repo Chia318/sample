@@ -28,7 +28,7 @@ require_once 'includes/modelCategoryInventory.inc.php'; // This file should fetc
     <li class="nav-item"><a href="main.html" class="nav-link"><i class="bx bx-bar-chart-square"></i>Dashboard</a></li>
     <!--INVENTORY-->
     <li class="nav-item">
-      <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#inventoryMenu" aria-expanded="true"><i class="bx bx-package"></i>Inventory</a></li>
+      <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#inventoryMenu" aria-expanded="true"><i class="bx bx-package"></i>Inventory Management</a></li>
         <div class="collapse" id="inventoryMenu">
           <ul class="list-unstyled ps-3">
             <li><a href="inventory.php" class="nav-link">Item</a></li>

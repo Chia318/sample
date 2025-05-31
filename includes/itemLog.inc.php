@@ -9,30 +9,54 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 		try{
 			require_once "dbh.inc.php";
 
-			$query = "INSERT INTO itemlog (LogID, ItemID, ItemQty, ItemStatus, CreatedDate) VALUES (:LogID, :ItemID, :ItemQty, :ItemStatus, NOW());";
+			$checkQtyQuery = "SELECT ItemQty FROM Item WHERE ItemID = :ItemID";
+        	$stmtCheck = $pdo->prepare($checkQtyQuery);
+        	$stmtCheck->bindParam(":ItemID", $ItemID);
+    	    $stmtCheck->execute();
+	        $result = $stmtCheck->fetch(PDO::FETCH_ASSOC);
 
-			$stmt = $pdo->prepare($query);
+			if ($result && $result["ItemQty"] < $ItemQty) {
+            //die("Error Message：Quantity exceeds available stock.");
+				$_SESSION["error"] = "Insufficient stock. Please enter a valid quantity.";
+            	header("Location: ../inventory.php");
+				exit();
+			}
+
+			$query = "INSERT INTO itemlog (LogID, ItemID, ItemQty, ItemStatus, CreatedDate) VALUES (:LogID, :ItemID, :ItemQty, :ItemStatus, NOW());";
+			$update = "UPDATE Item SET ItemQty=ItemQty-:ItemQty where ItemID=:ItemID;";
+
+			$stmtInsert = $pdo->prepare($query);
+			$stmtUpdate = $pdo->prepare($update);
 
 			$options = [
 				'cost' => 12
 			];
 			$hashedPwd = password_hash("1234", PASSWORD_BCRYPT, $options);
 
-            $stmt->bindParam(":LogID", $LogID);
-            $stmt->bindParam(":ItemID" , $ItemID);
-			$stmt->bindParam(":ItemQty" , $ItemQty);
-            $stmt->bindParam(":ItemStatus" , $ItemStatus);
+            $stmtInsert->bindParam(":LogID", $LogID);
+            $stmtInsert->bindParam(":ItemID" , $ItemID);
+			$stmtInsert->bindParam(":ItemQty" , $ItemQty);
+            $stmtInsert->bindParam(":ItemStatus" , $ItemStatus);
 			
+			$stmtInsert ->execute();
 
-			$stmt ->execute();
+			$stmtUpdate->bindParam(":ItemID" , $ItemID);
+			$stmtUpdate->bindParam(":ItemQty" , $ItemQty);
+		
+			$stmtUpdate ->execute();
 
 			$pdo = null;
-			$stmt = null;
+			$stmtInsert = null;
+			$stmtUpdate = null;
 
+			$_SESSION["success"] = "Stock updated successfully.";
+        	header("Location: ../inventory.php");
+        	exit();
+		
+
+			
 			// Redirect to the new file after successful update
 			// You can change the URL to the desired page
-			header("Location: ../inventory.php");
-
 			die();
 		}catch(PDOException $e){
 			die("Query failed: " . $e->getMessage());
