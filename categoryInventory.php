@@ -185,7 +185,7 @@ require_once 'includes/modelCategoryInventory.inc.php'; // This file should fetc
           alert("Category has been deleted.");
           location.reload();
         } else {
-          alert("Category has not delete: " + result);
+          alert("Category has not delete: This Category still using in Item. You are able to delete this Category when it is free in Item Category.");
         }
       })
       .catch(error => {

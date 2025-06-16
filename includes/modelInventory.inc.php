@@ -8,9 +8,10 @@ function display_item()
 {
     global $pdo;
 
-    $query = "SELECT i.ItemID, i.ItemName, c.CategoryName, i.ItemQty 
+    $query = "SELECT i.ItemID, i.ItemName, i.CategoryID, c.CategoryName, i.ItemQty 
               FROM item i
               JOIN category c on c.CategoryID=i.CategoryID;";
+              
     $stmt = $pdo->prepare($query);
     $stmt->execute();
 
@@ -27,16 +28,16 @@ function display_item()
             echo "<button class=\"btn btn-sm btn-warning me-1 editItemBtn\" 
                     data-Item-id=\"" . htmlspecialchars($Item['ItemID']) . "\"
                     data-Item-name=\"" . htmlspecialchars($Item['ItemName']) . "\"
-                    data-Item-category=\"" . htmlspecialchars($Item['CategoryName']) . "\"
+                    data-Item-category=\"" . htmlspecialchars($Item['CategoryID']) . "\"
                     data-Item-qty=\"" . (int)$Item['ItemQty'] . "\"
                     data-bs-toggle=\"modal\" 
                     data-bs-target=\"editInventoryModal\">
                     <i class=\"bx bx-edit\"></i>
                   </button>";
-            echo "<button class=\"btn btn-sm btn-danger\" 
-                    onclick=\"deleteItem('" . htmlspecialchars($Item['ItemID']) . "')\">
-                    <i class=\"bx bx-trash\"></i>
-                  </button>";
+            //echo "<button class=\"btn btn-sm btn-danger\" 
+              //      onclick=\"deleteItem('" . htmlspecialchars($Item['ItemID']) . "')\">
+                //    <i class=\"bx bx-trash\"></i>
+                  //</button>";
             echo "</td>";
             echo "</tr>";
         }

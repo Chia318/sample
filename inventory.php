@@ -1,5 +1,16 @@
 <?php
 require_once 'includes/modelInventory.inc.php'; // This file should fetch roles from the database
+
+session_start();
+
+//if(!isset($_SESSION['user_id'])) {
+  //  header("Location: ./login.php");
+  //  exit();
+//}
+
+$userName = $_SESSION['name'] ?? '';
+$userEmail = $_SESSION['email'] ?? '';
+$userRole = $_SESSION['role'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -24,51 +35,76 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
   <div class="text-center fw-bold mb-4">
     <img src="image/logo.png" alt="Company Logo" class="img-fluid" style="max-width: 150px; height: auto;">
   </div>
-  <ul class="nav flex-column">
-    <li class="nav-item"><a href="main.html" class="nav-link"><i class="bx bx-bar-chart-square"></i>Dashboard</a></li>
-    <!--INVENTORY-->
-    <li class="nav-item">
-      <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#inventoryMenu" aria-expanded="true"><i class="bx bx-package"></i>Inventory Management</a></li>
-        <div class="collapse" id="inventoryMenu">
-          <ul class="list-unstyled ps-3">
-            <li><a href="inventory.php" class="nav-link">Inventory</a></li>
-            <li><a href="categoryInventory.php" class="nav-link">Category</a></li>
-          </ul>
-        </div>
-      </li>
-    <!--INVENTORY COMPLETED-->
-    <li class="nav-item"><a href="#" class="nav-link"><i class="bx bx-bell"></i>Alert</a></li>
-    <li class="nav-item"><a href="reportGeneration.html" class="nav-link"><i class="bx bx-file"></i>Report</a></li>
-    <!--follow-->
-    <li class="nav-item">
-      <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#donationMenu"><i class="bx bx-donate-heart"></i>Donation</a>
-      <div class="collapse" id="donationMenu">
-        <ul class="list-unstyled ps-3">
-          <li><a href="#" class="nav-link">Order</a></li>
-        </ul>
-      </div>
-    </li>
-    <!---->
-    <li class="nav-item">
-      <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#administrationMenu" aria-expanded="true">
-        <i class="bx bx-cog"></i> Administration
-      </a>
-      <div class="collapse show" id="administrationMenu">
-        <ul class="list-unstyled ps-3">
-          <li><a href="./userManagement.php" class="nav-link active">User</a></li>
-          <li><a href="./roleManagement.php" class="nav-link">Role</a></li>
-          <li><a href="#" class="nav-link">Permission</a></li>
-          <li><a href="#" class="nav-link">Setting</a></li>
-        </ul>
-      </div>
-    </li>
-  </ul>
+    <div class="sidebar-menu">
+      <ul class="nav flex-column">
+        <li class="nav-item"><a href="./main.php" class="nav-link"><i class="bx bx-bar-chart-square"></i>Dashboard</a></li>
+        <li class="nav-item"><a href="#" class="nav-link"><i class="bx bx-chat"></i>Message Center</a></li>
+        <li class="nav-item"><a href="./reportGeneration.php" class="nav-link"><i class="bx bx-file"></i>Report</a></li>
+
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="collapse" data-bs-target="#inventoryMenu" aria-expanded="false" style="cursor: pointer;">
+            <i class="bx bx-package"></i> Inventory Management
+          </a>
+          <div class="collapse show" id="inventoryMenu">
+            <ul class="list-unstyled ps-3">
+              <li><a href="./inventory.php" class="nav-link">Inventory</a></li>
+              <li><a href="./categoryInventory.php" class="nav-link">Category</a></li>
+              <li><a href="./alert.php" class="nav-link">Alert</a></li>
+            </ul>
+          </div>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="collapse" data-bs-target="#donationMenu" aria-expanded="false" style="cursor: pointer;">
+            <i class="bx bx-donate-heart"></i>Donation
+          </a>
+          <div class="collapse" id="donationMenu">
+            <ul class="list-unstyled ps-3">
+              <li><a href="#" class="nav-link">Order</a></li>
+              <li><a href="./order.php" class="nav-link">Order History</a></li>
+              <li><a href="./acceptanceoforder.php" class="nav-link">Acceptance of Order</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="collapse" data-bs-target="#administrationMenu" aria-expanded="false" style="cursor: pointer;">
+            <i class="bx bx-cog"></i> Administration
+          </a>
+          <div class="collapse" id="administrationMenu">
+            <ul class="list-unstyled ps-3">
+              <li><a href="./userManagement.php" class="nav-link">User</a></li>
+              <li><a href="./roleManagement.php" class="nav-link">Role</a></li>
+              <li><a href="./permissionManagement.php" class="nav-link">Permission</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
 </aside>
 
 <div class="main-content">
   <div class="header">
     <div class="left"><h4>Inventory</h4></div>
-    <div class="right"><div class="user">SUPERADMIN9999 <i class="bx bx-chevron-down"></i></div></div>
+    <div class="dropdown">
+        <button class="btn user-button" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <class="mb-0"><?= htmlspecialchars($userName) ?>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="userDropdown" style="min-width: 250px;">
+          <div class="text-center mb-2">
+            <img src="image/avantar.png" alt="Avatar" class="rounded-circle mb-2" width="80" height="80">
+            <h6 class="mb-0"><?= htmlspecialchars($userName) ?></h6>
+            <small class="text-muted"><?= htmlspecialchars($userEmail) ?></small>
+          </div>
+          <hr>
+          <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+            <i class="bx bx-key"></i> Reset Password
+          </button>
+          <button class="dropdown-item text-danger" onclick="confirmLogout(event)">
+            <i class='bx bx-log-out'></i> Logout
+          </button>
+        </div>
+      </div>
   </div>
 
   <div class="content" id="dashboardContent">
@@ -81,13 +117,14 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
           <input type="text" id="itemSearch" class="form-control" placeholder="Search Inventory...">
         </div>
         
-        <div class="d-flex gap-6"></div>
+        <div class="d-flex gap-2">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemLogModal" >
-          <i class="bx bx-plus"></i> Inventory Update
+          <i class="bx bx-plus"></i> Stock Update
         </button>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addInventoryModal">
           <i class="bx bx-plus"></i> Add Inventory
         </button>
+        </div>
       </div>
 
       <div class="table-responsive">
@@ -102,7 +139,7 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
             </tr>
           </thead>
           <tbody>
-            <!--这边需要更改，用来DISPLAY RESULT-->
+            <DISPLAY RESULT-->
             <?php display_item(); ?>
           </tbody>
         </table>
@@ -119,7 +156,7 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
   <div class="modal-dialog modal-dialog-centered">
     <form class="modal-content" action="includes/itemLog.inc.php" method="POST">
       <div class="modal-header">
-        <h5 class="modal-title">Inventory Update</h5>
+        <h5 class="modal-title">Stock Update</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -271,29 +308,29 @@ require_once 'includes/modelInventory.inc.php'; // This file should fetch roles 
   });
 
   // Delete role
-  function deleteItem(ItemID) {
-    if (confirm("Please confirm the deletion Inventory?")) {
-      fetch('includes/deleteInventory.inc.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ 'ItemID': ItemID })
-      })
-      .then(response => response.text())
-      .then(result => {
-        console.log("Server response:", result);
-        if (result === "success") {
-          alert("Inventory has been deleted.");
-          location.reload();
-        } else {
-          alert("Inventory has not delete: " + result);
-        }
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("An error occurred while deleting the Inventory.");
-      });
-    }
-  }
+  //function deleteItem(ItemID) {
+  //  if (confirm("Please confirm the deletion Inventory?")) {
+  //    fetch('includes/deleteInventory.inc.php', {
+  //      method: 'POST',
+  //      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  //      body: new URLSearchParams({ 'ItemID': ItemID })
+  //    })
+  //    .then(response => response.text())
+  //    .then(result => {
+  //      console.log("Server response:", result);
+  //      if (result === "success") {
+  //        alert("Inventory has been deleted.");
+  //        location.reload();
+  //      } else {
+  //        alert("Inventory has not delete: " + result);
+  //      }
+  //    })
+  //    .catch(error => {
+  //      console.error("Error:", error);
+  //      alert("An error occurred while deleting the Inventory.");
+  //    });
+  //  }
+  //}
 
   
   
